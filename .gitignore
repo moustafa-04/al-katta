@@ -1,0 +1,23 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# Rider
+.idea/
+
+# Optional large IEEE OUI database (downloaded by the user)
+oui.txt
+
+# OS cruft
+Thumbs.db
+.DS_Store
