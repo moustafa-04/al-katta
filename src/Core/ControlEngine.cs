@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 using PacketDotNet;
+using Timer = System.Threading.Timer;
 using SharpPcap;
 
 namespace AlKatta.Core;

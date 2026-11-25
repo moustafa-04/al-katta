@@ -18,6 +18,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         TrySetWindowIcon();
+        TrySetHeaderLogo();
 
         // --- system tray ---
         _tray = new Forms.NotifyIcon
@@ -80,6 +81,21 @@ public partial class MainWindow : Window
     {
         try { (DataContext as MainViewModel)?.OnClosing(); } catch { }
         try { _tray.Visible = false; _tray.Dispose(); } catch { }
+    }
+
+    private void TrySetHeaderLogo()
+    {
+        try
+        {
+            var p = Path.Combine(AppContext.BaseDirectory, "logo.ico");
+            if (File.Exists(p))
+            {
+                LogoImage.Source = BitmapFrame.Create(new Uri(p), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                LogoImage.Visibility = Visibility.Visible;
+                LogoFallback.Visibility = Visibility.Collapsed;
+            }
+        }
+        catch { /* keep the "ق" fallback */ }
     }
 
     private void TrySetWindowIcon()

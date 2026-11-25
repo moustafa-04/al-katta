@@ -3,11 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <!-- Simple dark-ish palette -->
-        <SolidColorBrush x:Key="Bg" Color="#1E1F24"/>
-        <SolidColorBrush x:Key="Panel" Color="#2A2C33"/>
-        <SolidColorBrush x:Key="Accent" Color="#4C8BF5"/>
-        <SolidColorBrush x:Key="Text" Color="#ECECEC"/>
-        <SolidColorBrush x:Key="SubText" Color="#9AA0AA"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

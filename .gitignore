@@ -21,3 +21,4 @@ oui.txt
 # OS cruft
 Thumbs.db
 .DS_Store
+publish/

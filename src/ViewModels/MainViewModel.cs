@@ -26,6 +26,11 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private bool isScanning;
     [ObservableProperty] private string statusLine = "اختر واجهة واضغط فحص.";
 
+    // --- live summary (sidebar dashboard) ---
+    [ObservableProperty] private int activeLimits;
+    [ObservableProperty] private double totalDownKbps;
+    [ObservableProperty] private double totalUpKbps;
+
     public MainViewModel()
     {
         foreach (var ni in NetworkContext.ListInterfaces())
@@ -187,24 +192,36 @@ public partial class MainViewModel : ObservableObject
 
     private void UpdateLiveStats()
     {
-        if (_engine == null) return;
         long now = Stopwatch.GetTimestamp();
         double freq = Stopwatch.Frequency;
+        double sumDown = 0, sumUp = 0;
+        int active = 0;
 
         foreach (var d in Devices)
         {
-            if (!_engine.TryGetCounters(d.MacKey, out var rx, out var tx)) { d.LiveDownKbps = 0; d.LiveUpKbps = 0; continue; }
-            if (_last.TryGetValue(d.MacKey, out var prev))
+            if (_engine != null && _engine.TryGetCounters(d.MacKey, out var rx, out var tx))
             {
-                double secs = (now - prev.ticks) / freq;
-                if (secs > 0)
+                if (_last.TryGetValue(d.MacKey, out var prev))
                 {
-                    d.LiveDownKbps = Math.Max(0, (rx - prev.rx) * 8.0 / 1000.0 / secs);
-                    d.LiveUpKbps = Math.Max(0, (tx - prev.tx) * 8.0 / 1000.0 / secs);
+                    double secs = (now - prev.ticks) / freq;
+                    if (secs > 0)
+                    {
+                        d.LiveDownKbps = Math.Max(0, (rx - prev.rx) * 8.0 / 1000.0 / secs);
+                        d.LiveUpKbps = Math.Max(0, (tx - prev.tx) * 8.0 / 1000.0 / secs);
+                    }
                 }
+                _last[d.MacKey] = (rx, tx, now);
             }
-            _last[d.MacKey] = (rx, tx, now);
+            else { d.LiveDownKbps = 0; d.LiveUpKbps = 0; }
+
+            if (d.LimitEnabled) active++;
+            sumDown += d.LiveDownKbps;
+            sumUp += d.LiveUpKbps;
         }
+
+        ActiveLimits = active;
+        TotalDownKbps = sumDown;
+        TotalUpKbps = sumUp;
     }
 
     private void TearDown()
